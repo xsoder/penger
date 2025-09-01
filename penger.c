@@ -77,6 +77,10 @@ void DrawCenteredText(Font font, const char* text, float fontSize, float spacing
 int main(void)
 {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+    Image logo = LoadImage("penger.png");
+    SetWindowIcon(logo);
+    SetWindowPosition(1920 - GetScreenWidth(), 0);
+    SetWindowOpacity(0.6f);
     SetTargetFPS(60);
 
     const char* home = getenv("HOME");

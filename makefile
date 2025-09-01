@@ -17,6 +17,9 @@ RAYLIB_TAR := $(RAYLIB_DIR).tar.gz
 all: $(BIN)
 
 $(BIN): $(SRC) $(RAYLIB_DIR)
+	mkdir -p "$(HOME)/.fonts"
+	cp -f Iosevka-Regular.ttf "$(HOME)/.fonts/"
+
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 $(RAYLIB_DIR):
@@ -25,8 +28,6 @@ $(RAYLIB_DIR):
 		tar -xf $(RAYLIB_TAR); \
 		rm -f $(RAYLIB_TAR); \
 	fi
-	mkdir -p "$(HOME)/.fonts"
-	cp -f Iosevka-Regular.ttf "$(HOME)/.fonts/"
 
 clean:
 	-rm -f $(BIN)
