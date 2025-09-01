@@ -2,7 +2,6 @@ PREFIX ?= /usr/local
 DESTDIR ?=
 BINDIR := $(PREFIX)/bin
 
-CC := gcc
 CFLAGS := -Wall -Wextra -Iraylib-5.5_linux_amd64/include
 LDFLAGS := -Lraylib-5.5_linux_amd64/lib -l:libraylib.a -lm
 
@@ -19,8 +18,7 @@ all: $(BIN)
 $(BIN): $(SRC) $(RAYLIB_DIR)
 	mkdir -p "$(HOME)/.fonts"
 	cp -f Iosevka-Regular.ttf "$(HOME)/.fonts/"
-
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+	gcc $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 $(RAYLIB_DIR):
 	@if [ ! -d "$(RAYLIB_DIR)" ]; then \

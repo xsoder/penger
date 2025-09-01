@@ -80,7 +80,6 @@ int main(void)
     Image logo = LoadImage("penger.png");
     SetWindowIcon(logo);
     SetWindowPosition(1920 - GetScreenWidth(), 0);
-    SetWindowOpacity(0.6f);
     SetTargetFPS(60);
 
     const char* home = getenv("HOME");
