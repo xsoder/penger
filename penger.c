@@ -76,8 +76,14 @@ void DrawCenteredText(Font font, const char* text, float fontSize, float spacing
 
 int main(void)
 {
+    SetTraceLogLevel(LOG_NONE);
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     Image logo = LoadImage("penger.png");
+    
+    int primary = 0;
+    int monitorWidth = GetMonitorWidth(primary);
+    SetWindowPosition(monitorWidth - GetScreenWidth(), 0);
+
     SetWindowIcon(logo);
     SetWindowPosition(1920 - GetScreenWidth(), 0);
     SetTargetFPS(60);
