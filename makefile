@@ -1,9 +1,13 @@
-PREFIX ?= /usr/local
-DESTDIR ?=
-BINDIR := $(PREFIX)/bin
+ifeq ($(origin PREFIX),default)
+    INSTALL_LOCAL := 1
+    BINDIR := .
+else
+    INSTALL_LOCAL := 0
+    BINDIR := $(DESTDIR)$(PREFIX)/bin
+endif
 
-CFLAGS := -Wall -Wextra -Iraylib-5.5_linux_amd64/include
-LDFLAGS := -Lraylib-5.5_linux_amd64/lib -l:libraylib.a -lm
+CFLAGS := -Wall -Wextra -Iraylib-5.5_linux_amd64/include $(shell pkg-config --cflags glib-2.0 libnotify)
+LDFLAGS := -Lraylib-5.5_linux_amd64/lib -l:libraylib.a -lm $(shell pkg-config --libs glib-2.0 libnotify)
 
 SRC := penger.c
 BIN := penger
@@ -11,13 +15,11 @@ BIN := penger
 RAYLIB_DIR := raylib-5.5_linux_amd64
 RAYLIB_TAR := $(RAYLIB_DIR).tar.gz
 
-.PHONY: all install uninstall clean $(RAYLIB_DIR)
+.PHONY: all install uninstall clean $(RAYLIB_DIR) install-assets
 
 all: $(BIN)
 
-$(BIN): $(SRC) $(RAYLIB_DIR)
-	mkdir -p "$(HOME)/.fonts"
-	cp -f Iosevka-Regular.ttf "$(HOME)/.fonts/"
+$(BIN): $(SRC) $(RAYLIB_DIR) install-assets
 	gcc $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 $(RAYLIB_DIR):
@@ -27,13 +29,25 @@ $(RAYLIB_DIR):
 		rm -f $(RAYLIB_TAR); \
 	fi
 
+install: $(BIN)
+	@if [ "$(INSTALL_LOCAL)" = "0" ]; then \
+		mkdir -p "$(BINDIR)"; \
+	fi
+	@install -m 0755 "$(BIN)" "$(BINDIR)/$(BIN)"
+
+install-assets:
+	@if [ ! -f "$(HOME)/.fonts/Iosevka-Regular.ttf" ]; then \
+		mkdir -p "$(HOME)/.fonts"; \
+		cp -f Iosevka-Regular.ttf "$(HOME)/.fonts/"; \
+	fi
+	@if [ ! -f "$(HOME)/.local/audio/bip.mp3" ]; then \
+		mkdir -p "$(HOME)/.local/audio"; \
+		cp -f bip.mp3 "$(HOME)/.local/audio/"; \
+	fi
+
 clean:
 	-rm -f $(BIN)
 	-rm -rf $(RAYLIB_DIR) $(RAYLIB_TAR)
 
-install: $(BIN)
-	install -d "$(DESTDIR)$(BINDIR)"
-	install -m 0755 "$(BIN)" "$(DESTDIR)$(BINDIR)"
-
 uninstall:
-	-rm -f "$(DESTDIR)$(BINDIR)/$(BIN)"
+	-rm -f "$(BINDIR)/$(BIN)"
